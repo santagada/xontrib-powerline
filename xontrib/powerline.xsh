@@ -30,8 +30,8 @@ def cwd_sec():
 
 
 def branch_sec():
-    if $FORMATTER_DICT['curr_branch']():
-        return Section(' {curr_branch} ', '#333', $FORMATTER_DICT['branch_bg_color']()[1+len('background_'):-1])
+    if $PROMPT_FIELDS['curr_branch']():
+        return Section(' {curr_branch} ', '#333', $PROMPT_FIELDS['branch_bg_color']()[1+len('background_'):-1])
 
 
 def virtualenv_sec():
