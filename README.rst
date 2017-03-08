@@ -3,20 +3,40 @@ Xontrib Powerline
 
 Powerline for Xonsh shell.
 
+.. image:: https://github.com/santagada/xontrib-powerline/raw/master/screenshot.png
+
 Install
 -------
 
 To install this xontrib first download and install the python package:
 
-::
+.. code:: bash
 
-    pip install xontrib-powerline
+    pip3 install xontrib-powerline
 
 And them load it on your ``.xonshrc``
 
-::
+.. code:: bash
 
-    xontrib powerline
+    xontrib load powerline
+
+Configuration
+-------------
+
+There are two variables that can be set, ``PL_PROMPT`` for the right prompt and ``PL_TOOLBAR`` for the bottom toolbar.
+They contain a list of sections that can be used separated by ``>``. The value ``!`` means not to use that prompt.
+
+Examples:
+
+.. code:: python
+
+    $PL_TOOLBAR = 'who>virtualenv>branch>cwd>full_proc'
+    $PL_TOOLBAR = '!'  # for no toolbar
+
+To see all available sections type ``pl_available_sections``, and to commit changes to your prompt execute ``pl_build_prompt``.
+
+More Info
+---------
 
 read more on the `xontrib docs`_ and if you want to create your own on
 the `xontrib tutorial`_

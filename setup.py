@@ -10,7 +10,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='xontrib-powerline',
-    version='0.1.0',
+    version='0.2.0',
 
     description='Powerline for Xonsh shell',
     long_description=long_description,
