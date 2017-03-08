@@ -47,7 +47,7 @@ Credits
 This package was created by Leonardo Santagada with Cookiecutter_ 
 and the `laerus/cookiecutter-xontrib`_ project template.
 
-The font being used on the screenshot is the incredible `3270 font`_ `nerd fonts`_ variant.
+The font being used on the screenshot is the incredible `3270 font`_ with injected characters from `nerd fonts`_.
 
 .. _`nerd fonts`: https://github.com/ryanoasis/nerd-fonts
 .. _`3270 font`: https://github.com/rbanffy/3270font
