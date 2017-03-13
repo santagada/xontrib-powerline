@@ -1,5 +1,6 @@
 import os
 from collections import namedtuple
+from time import strftime
 
 
 __all__ = ()
@@ -7,11 +8,13 @@ __all__ = ()
 Section = namedtuple('Section', ['line', 'fg', 'bg'])
 
 $PL_PARTS = 10
-$PL_DEFAULT_PROMPT = 'short_cwd>timing>rtns'
-$PL_DEFAULT_TOOLBAR = 'who>virtualenv>branch>cwd>full_proc'
+$PL_DEFAULT_PROMPT = 'short_cwd>rtns'
+$PL_DEFAULT_RPROMPT = 'time'
+$PL_DEFAULT_TOOLBAR = 'who>cwd>branch>virtualenv>full_proc'
 
-SEP = ''
-SEP_THIN = ''
+$PL_SEP = ''
+$PL_RSEP = ''
+$PL_SEP_THIN = ''
 
 available_sections = {}
 
@@ -22,8 +25,19 @@ def register_sec(f):
 
 
 @register_sec
+def time():
+    return Section(strftime(' %H:%M '), 'WHITE', 'BLUE')
+
+
+@register_sec
 def short_cwd():
     return Section(' {short_cwd} ', 'WHITE', '#333')
+
+
+def compress_home(path):
+    if path.startswith($HOME):
+        path = '~' + path[len($HOME):]
+    return path
 
 
 @register_sec
@@ -34,15 +48,12 @@ def cwd():
     else:
         git_format = False
 
-    cwd = $PWD
-    if cwd.startswith($HOME):
-        cwd = '~' + cwd[len($HOME):]
+    cwd = compress_home($PWD)
 
-    ps = cwd.strip('/').split(os.sep)
+    ps = cwd.strip(os.sep).split(os.sep)
     if git_format:
-        if top_level.startswith($HOME):
-            top_level = '~' + top_level[len($HOME):]
-        git_idx = len(top_level.strip('/').split(os.sep)) - 1
+        top_level = compress_home(top_level)
+        git_idx = len(top_level.strip(os.sep).split(os.sep)) - 1
         ps[git_idx] = '{BLUE}' + ps[git_idx] + '{WHITE}'
 
     if len(ps) > $PL_PARTS:
@@ -51,7 +62,7 @@ def cwd():
         new_ps += ps[-($PL_PARTS-1):]
         ps = new_ps
 
-    return Section(' '+(' ' + SEP_THIN + ' ').join(ps) + ' ', 'WHITE', '#333')
+    return Section(' '+(' ' + $PL_SEP_THIN + ' ').join(ps) + ' ', 'WHITE', '#333')
 
 
 @register_sec
@@ -63,7 +74,7 @@ def branch():
 @register_sec
 def virtualenv():
     if $PROMPT_FIELDS['env_name']():
-        return Section(' 🐍  {env_name} ', 'INTENSE_CYAN', 'BLUE')
+        return Section(' 🐍 {env_name} ', 'INTENSE_CYAN', 'BLUE')
 
 
 @register_sec
@@ -110,14 +121,14 @@ def who():
     return Section(' {user}@{hostname} ', 'WHITE', '#555')
 
 
-def prompt_builder(var):
-    if var == '!':
+def prompt_builder(var, right=False):
+    if var == '!':  # in case the prompt format is a single ! it means empty
         return ''
 
     pre_sections = []
     for e in var.split('>'):
         if e not in available_sections:
-            print('section {} not found, skipping it'.format((e,)))
+            print('section %s not found, skipping it' % e)
             continue
         pre_sections.append(available_sections[e])
 
@@ -125,6 +136,8 @@ def prompt_builder(var):
         p = []
         sections = []
         for s in pre_sections:
+            # A section can be 2 things, a literal Section or a Function
+            # and Functions can either return a Section of None if they are not part of prompt
             if isinstance(s, Section):
                 sections.append(s)
             else:
@@ -136,21 +149,17 @@ def prompt_builder(var):
         for i, sec in enumerate(sections):
             last = (i == size-1)
             first = (i == 0)
-            p.append('{'+sec.fg+'}')
 
-            if first:
-                p.append('{BACKGROUND_'+sec.bg+'}')
-            p.append(sec[0])
-            if last:
-                p.append('{NO_COLOR}')
-                p.append('{'+sec.bg+'}')
-                p.append(SEP + ' ')
-                p.append('{NO_COLOR}')
+            if right:
+                p.append('{%s}%s{BACKGROUND_%s}{%s}%s' % (sec.bg, $PL_RSEP, sec.bg, sec.fg, sec.line))
             else:
-                p.append('{'+sec.bg+'}')
-                p.append('{BACKGROUND_'+sections[i+1].bg+'}')
-                p.append(SEP)
-
+                if first:
+                    p.append('{BACKGROUND_%s}' % sec.bg)
+                p.append('{%s}%s' % (sec.fg, sec.line))
+                if last:
+                    p.append('{NO_COLOR}{%s}%s{NO_COLOR} ' % (sec.bg, $PL_SEP))
+                else:
+                    p.append('{BACKGROUND_%s}{%s}%s' % (sections[i+1].bg, sec.bg, $PL_SEP))
         return ''.join(p)
     return prompt
 
@@ -160,16 +169,17 @@ def pl_available_sections():
 
 
 def pl_build_prompt():
-    if 'PL_PROMPT' not in ${...}:
-        $PL_PROMPT = $PL_DEFAULT_PROMPT
-
-    if 'PL_TOOLBAR' not in ${...}:
-        $PL_TOOLBAR = $PL_DEFAULT_TOOLBAR
+    for var in 'PROMPT RPROMPT TOOLBAR'.split():
+        varname = 'PL_' + var
+        defname = 'PL_DEFAULT_' + var
+        if varname not in  __xonsh_env__:
+            __xonsh_env__[varname] = __xonsh_env__[defname]
 
     $PROMPT = prompt_builder($PL_PROMPT)
     $BOTTOM_TOOLBAR = prompt_builder($PL_TOOLBAR)
-    $TITLE = '{cwd_base} {user}@{hostname}'
-    $MULTILINE_PROMPT = SEP_THIN
+    $RIGHT_PROMPT = prompt_builder($PL_RPROMPT, True)
+    $TITLE = '{current_job:{} | }{cwd_base} | {user}@{hostname}'
+    $MULTILINE_PROMPT = ''
 
 pl_build_prompt()
 
