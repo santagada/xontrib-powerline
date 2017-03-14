@@ -47,19 +47,20 @@ def compress_home(path):
 
 @register_sec
 def cwd():
+    ps = compress_home($PWD).strip(os.sep).split(os.sep)
+
     if $PROMPT_FIELDS['curr_branch']():
-        git_format = True
-        top_level = $(git rev-parse --show-toplevel).strip()
-    else:
-        git_format = False
-
-    cwd = compress_home($PWD)
-
-    ps = cwd.strip(os.sep).split(os.sep)
-    if git_format:
-        top_level = compress_home(top_level)
-        git_idx = len(top_level.strip(os.sep).split(os.sep)) - 1
-        ps[git_idx] = '{BLUE}' + ps[git_idx] + '{WHITE}'
+        prefix = $(git rev-parse --show-prefix).strip()
+        ni = -1  # the default is for empty prefix, which means the last directory is the root of the repository
+        if prefix != '':  # this is the case that we are in a sub directory, so we try matching subdirectories
+            subs = prefix.rstrip(os.sep).split(os.sep)
+            for sub in reversed(subs):
+                if ps[ni] != sub:
+                    ni = 0
+                    break
+                ni -= 1
+        if ni != 0:  # if ni ==0 subdirectory matching failed
+            ps[ni] = '{BLUE}%s{WHITE}' % ps[ni]
 
     if len(ps) > $PL_PARTS:
         new_ps = [ps[0]]
@@ -67,7 +68,8 @@ def cwd():
         new_ps += ps[-($PL_PARTS-1):]
         ps = new_ps
 
-    return Section(' '+(' ' + $PL_SEP_THIN + ' ').join(ps) + ' ', 'WHITE', '#333')
+    ps_join = (' %s ' % $PL_SEP_THIN).join(ps)
+    return Section(' %s ' % ps_join, 'WHITE', '#333')
 
 
 @register_sec
