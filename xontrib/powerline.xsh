@@ -9,7 +9,7 @@ Section = namedtuple('Section', ['line', 'fg', 'bg'])
 
 $PL_PARTS = 10
 $PL_DEFAULT_PROMPT = 'short_cwd>rtns'
-$PL_DEFAULT_RPROMPT = 'time'
+$PL_DEFAULT_RPROMPT = 'history>time'
 $PL_DEFAULT_TOOLBAR = 'who>cwd>branch>virtualenv>full_proc'
 
 $PL_SEP = ''
@@ -22,6 +22,11 @@ available_sections = {}
 def register_sec(f):
     available_sections[f.__name__] = f
     return f
+
+
+@register_sec
+def history():
+    return Section(' %d ' % len(__xonsh_history__), 'WHITE', '#333')
 
 
 @register_sec
