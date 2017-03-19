@@ -13,12 +13,24 @@ $PL_DEFAULT_PROMPT = 'short_cwd>rtns'
 $PL_DEFAULT_RPROMPT = 'history>time'
 $PL_DEFAULT_TOOLBAR = 'who>cwd>branch>virtualenv>full_proc'
 
-$PL_SEP = ''
-$PL_RSEP = ''
-$PL_SEP_THIN = ''
+modes = {
+    'powerline': '\ue0b0\ue0b1\ue0b2\ue0b3',
+    'round': '\ue0b4\ue0b5\ue0b6\ue0b7',
+    'down': '\ue0b8\ue0b9\ue0ba\ue0bb',
+    'up': '\ue0bc\ue0bd\ue0be\ue0bf',
+    'flame': '\ue0c0\ue0c1\ue0c2\ue0c3',
+    'squares': '\ue0c6\ue0c4\ue0c7\ue0c5',
+    'ruiny': '\ue0c8\ue0c1\ue0ca\ue0c3',
+    'lego': '\ue0d1\ue0d0\ue0b2\ue0d0',
+}
 
 available_sections = {}
 HOME = path.expanduser('~')
+
+
+def alias(f):
+    aliases[f.__name__] = f
+    return f
 
 
 def register_sec(f):
@@ -173,15 +185,32 @@ def prompt_builder(var, right=False):
     return prompt
 
 
+@alias
+def pl_set_mode(args):
+    if len(args) != 1 or args[0] not in modes:
+        print('you need to select a mode from:')
+        for mode, seps in modes.items():
+            print('%s: %s' % (mode, ', '.join(seps)))
+        return
+    seps = modes[args[0]]
+    $PL_SEP, $PL_SEP_THIN, $PL_RSEP, _ = seps
+
+
+@alias
 def pl_available_sections():
-    print(' '.join(list(available_sections.keys())))
+    for name in available_sections.keys():
+        r = prompt_builder(name)()
+        f = __xonsh_shell__.prompt_formatter(r)
+        __xonsh_shell__.print_color('%s: %s' % (name, f))
 
 
+@alias
 def pl_build_prompt():
+    pl_set_mode(['powerline'])
     for var in 'PROMPT RPROMPT TOOLBAR'.split():
         varname = 'PL_' + var
         defname = 'PL_DEFAULT_' + var
-        if varname not in  __xonsh_env__:
+        if varname not in __xonsh_env__:
             __xonsh_env__[varname] = __xonsh_env__[defname]
 
     $PROMPT = prompt_builder($PL_PROMPT)
@@ -190,7 +219,5 @@ def pl_build_prompt():
     $TITLE = '{current_job:{} | }{cwd_base} | {user}@{hostname}'
     $MULTILINE_PROMPT = ''
 
-pl_build_prompt()
 
-aliases['pl_available_sections'] = pl_available_sections
-aliases['pl_build_prompt'] = pl_build_prompt
+pl_build_prompt()
