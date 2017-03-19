@@ -1,4 +1,5 @@
 import os
+from os import path
 from collections import namedtuple
 from time import strftime
 
@@ -17,6 +18,7 @@ $PL_RSEP = ''
 $PL_SEP_THIN = ''
 
 available_sections = {}
+HOME = path.expanduser('~')
 
 
 def register_sec(f):
@@ -40,8 +42,8 @@ def short_cwd():
 
 
 def compress_home(path):
-    if path.startswith($HOME):
-        path = '~' + path[len($HOME):]
+    if path.startswith(HOME):
+        path = '~' + path[len(HOME):]
     return path
 
 
