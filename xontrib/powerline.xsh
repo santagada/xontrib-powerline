@@ -12,6 +12,7 @@ $PL_PARTS = 10
 $PL_DEFAULT_PROMPT = 'short_cwd>rtns'
 $PL_DEFAULT_RPROMPT = 'history>time'
 $PL_DEFAULT_TOOLBAR = 'who>cwd>branch>virtualenv>full_proc'
+$PL_DEFAULT_EXTRA_SEC = {}
 
 modes = {
     'powerline': '\ue0b0\ue0b1\ue0b2\ue0b3',
@@ -203,6 +204,13 @@ def pl_available_sections():
         f = __xonsh_shell__.prompt_formatter(r)
         __xonsh_shell__.print_color('%s: %s' % (name, f))
 
+def pl_add_section(new_sec):
+    for name, section in new_sec.items():
+        if not callable(section):
+            print('$PL_EXTRA_SEC[\'%s\'] must be a function' % name)
+            return
+        line, fg, bg = section()
+        available_sections[name] = Section(line, fg, bg)
 
 @alias
 def pl_build_prompt():
@@ -213,6 +221,7 @@ def pl_build_prompt():
         if varname not in __xonsh_env__:
             __xonsh_env__[varname] = __xonsh_env__[defname]
 
+    pl_add_section($PL_EXTRA_SEC)
     $PROMPT = prompt_builder($PL_PROMPT)
     $BOTTOM_TOOLBAR = prompt_builder($PL_TOOLBAR)
     $RIGHT_PROMPT = prompt_builder($PL_RPROMPT, True)
