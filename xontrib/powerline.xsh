@@ -160,6 +160,8 @@ def prompt_builder(var, right=False):
         for s in pre_sections:
             # A section can be 2 things, a literal Section or a Function
             # and Functions can either return a Section of None if they are not part of prompt
+            if type(s()) == list:
+                s = Section(*s())
             if isinstance(s, Section):
                 sections.append(s)
             else:
@@ -204,13 +206,13 @@ def pl_available_sections():
         f = __xonsh_shell__.prompt_formatter(r)
         __xonsh_shell__.print_color('%s: %s' % (name, f))
 
-def pl_add_section(new_sec):
+def add_section(new_sec):
     for name, section in new_sec.items():
         if not callable(section):
-            print('$PL_EXTRA_SEC[\'%s\'] must be a function' % name)
+            print('$PL_EXTRA_SEC[\'%s\'] must be a function that return a list' % name)
             return
-        line, fg, bg = section()
-        available_sections[name] = Section(line, fg, bg)
+        available_sections[name] = section
+
 
 @alias
 def pl_build_prompt():
@@ -221,7 +223,7 @@ def pl_build_prompt():
         if varname not in __xonsh_env__:
             __xonsh_env__[varname] = __xonsh_env__[defname]
 
-    pl_add_section($PL_EXTRA_SEC)
+    add_section($PL_EXTRA_SEC)
     $PROMPT = prompt_builder($PL_PROMPT)
     $BOTTOM_TOOLBAR = prompt_builder($PL_TOOLBAR)
     $RIGHT_PROMPT = prompt_builder($PL_RPROMPT, True)
