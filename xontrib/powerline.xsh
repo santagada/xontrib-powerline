@@ -2,6 +2,7 @@ import os
 from os import path
 from collections import namedtuple
 from time import strftime
+from xonsh.platform import ptk_shell_type
 
 
 __all__ = ()
@@ -12,6 +13,9 @@ $PL_PARTS = 10
 $PL_DEFAULT_PROMPT = 'short_cwd>rtns'
 $PL_DEFAULT_RPROMPT = 'history>time'
 $PL_DEFAULT_TOOLBAR = 'who>cwd>branch>virtualenv>full_proc'
+
+if ptk_shell_type() == 'prompt_toolkit2':
+    $PTK_STYLE_OVERRIDES['bottom-toolbar'] = 'noreverse'
 
 modes = {
     'powerline': '\ue0b0\ue0b1\ue0b2\ue0b3',
