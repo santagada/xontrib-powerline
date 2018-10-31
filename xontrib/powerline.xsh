@@ -93,7 +93,7 @@ def cwd():
 @register_sec
 def branch():
     if $PROMPT_FIELDS['curr_branch']():
-        return Section(' {curr_branch} ', '#333', $PROMPT_FIELDS['branch_bg_color']()[1+len('background_'):-1])
+        return Section('  {curr_branch} ', '#333', $PROMPT_FIELDS['branch_bg_color']()[1+len('background_'):-1])
 
 
 @register_sec
