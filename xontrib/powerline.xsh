@@ -40,7 +40,7 @@ def register_sec(f):
 
 @register_sec
 def history():
-    return Section(' %d ' % len(__xonsh_history__), 'WHITE', '#333')
+    return Section(' %d ' % len(__xonsh__.history), 'WHITE', '#333')
 
 
 @register_sec
@@ -100,14 +100,14 @@ def virtualenv():
 
 @register_sec
 def rtns():
-    if __xonsh_history__.rtns and __xonsh_history__.rtns[-1] != 0:
+    if __xonsh__.history.rtns and __xonsh__.history.rtns[-1] != 0:
         return Section(' ! ', 'WHITE', 'RED')
 
 
 @register_sec
 def full_rtns():
-    if __xonsh_history__.rtns:
-        rtn = __xonsh_history__.rtns[-1]
+    if __xonsh__.history.rtns:
+        rtn = __xonsh__.history.rtns[-1]
         if rtn != 0:
             color = 'RED'
         else:
@@ -118,16 +118,16 @@ def full_rtns():
 
 @register_sec
 def timing():
-    if __xonsh_history__.tss:
-        tss = __xonsh_history__.tss[-1]
+    if __xonsh__.history.tss:
+        tss = __xonsh__.history.tss[-1]
 
         return Section(' %.2fs ' % (tss[1] - tss[0]), 'WHITE', '#444')
 
 
 @register_sec
 def full_proc():
-    if __xonsh_history__.buffer:
-        lst = __xonsh_history__.buffer[-1]
+    if __xonsh__.history.buffer:
+        lst = __xonsh__.history.buffer[-1]
         if lst['rtn'] != 0:
             color = 'RED'
         else:
@@ -200,8 +200,8 @@ def pl_set_mode(args):
 def pl_available_sections():
     for name in available_sections.keys():
         r = prompt_builder(name)()
-        f = __xonsh_shell__.prompt_formatter(r)
-        __xonsh_shell__.print_color('%s: %s' % (name, f))
+        f = __xonsh__.shell.prompt_formatter(r)
+        __xonsh__.shell.print_color('%s: %s' % (name, f))
 
 
 @alias
@@ -210,8 +210,8 @@ def pl_build_prompt():
     for var in 'PROMPT RPROMPT TOOLBAR'.split():
         varname = 'PL_' + var
         defname = 'PL_DEFAULT_' + var
-        if varname not in __xonsh_env__:
-            __xonsh_env__[varname] = __xonsh_env__[defname]
+        if varname not in __xonsh__.env:
+            __xonsh__.env[varname] = __xonsh__.env[defname]
 
     $PROMPT = prompt_builder($PL_PROMPT)
     $BOTTOM_TOOLBAR = prompt_builder($PL_TOOLBAR)
