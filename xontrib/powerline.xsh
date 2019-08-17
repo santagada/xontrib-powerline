@@ -13,6 +13,17 @@ $PL_PARTS = 10
 $PL_DEFAULT_PROMPT = 'short_cwd>rtns'
 $PL_DEFAULT_RPROMPT = 'history>time'
 $PL_DEFAULT_TOOLBAR = 'who>cwd>branch>virtualenv>full_proc'
+$PL_DEFAULT_EXTRA_SEC = {}
+$PL_EXTRA_SEC = { 'user': lambda: [' {user} ', 'WHITE', '#555'] } if 'PL_EXTRA_SEC' not in ${...} else $PL_EXTRA_SEC
+$PL_COLORS = {
+                "time": ("BLACK", "#00adee"),
+                "who": ("BLACK", "#666666"),
+                "short_cwd": ("BLACK", "#50a0a0"),
+                "cwd": ("#00adee", "WHITE"),
+                "history": ("WHITE", "#333333"),
+                "venv": ("BLACK", "INTENSE_GREEN"),
+            }
+
 
 if ptk_shell_type() == 'prompt_toolkit2':
     $PTK_STYLE_OVERRIDES['bottom-toolbar'] = 'noreverse'
@@ -44,17 +55,17 @@ def register_sec(f):
 
 @register_sec
 def history():
-    return Section(' %d ' % len(__xonsh__.history), 'WHITE', '#333')
+    return Section(' %d ' % len(__xonsh__.history), *$PL_COLORS["history"])
 
 
 @register_sec
 def time():
-    return Section(strftime(' %H:%M '), 'WHITE', 'BLUE')
+    return Section(strftime(' %H:%M '), *$PL_COLORS["time"])
 
 
 @register_sec
 def short_cwd():
-    return Section(' {short_cwd} ', 'WHITE', '#333')
+    return Section(' {short_cwd} ', *$PL_COLORS["short_cwd"])
 
 
 def compress_home(path):
@@ -87,7 +98,7 @@ def cwd():
         ps = new_ps
 
     ps_join = (' %s ' % $PL_SEP_THIN).join(ps)
-    return Section(' %s ' % ps_join, 'WHITE', '#333')
+    return Section(' %s ' % ps_join, *$PL_COLORS["cwd"])
 
 
 @register_sec
@@ -99,7 +110,7 @@ def branch():
 @register_sec
 def virtualenv():
     if $PROMPT_FIELDS['env_name']():
-        return Section(' 🐍 {env_name} ', 'INTENSE_CYAN', 'BLUE')
+        return Section(' 🐍 {env_name} ', *$PL_COLORS["venv"])
 
 
 @register_sec
@@ -143,7 +154,7 @@ def full_proc():
 
 @register_sec
 def who():
-    return Section(' {user}@{hostname} ', 'WHITE', '#555')
+    return Section(' {user}@{hostname} ', *$PL_COLORS["who"])
 
 
 def prompt_builder(var, right=False):
@@ -163,6 +174,8 @@ def prompt_builder(var, right=False):
         for s in pre_sections:
             # A section can be 2 things, a literal Section or a Function
             # and Functions can either return a Section of None if they are not part of prompt
+            if type(s()) == list:
+                s = Section(*s())
             if isinstance(s, Section):
                 sections.append(s)
             else:
@@ -187,6 +200,14 @@ def prompt_builder(var, right=False):
                     p.append('{BACKGROUND_%s}{%s}%s' % (sections[i+1].bg, sec.bg, $PL_SEP))
         return ''.join(p)
     return prompt
+
+
+def add_section(new_sec):
+    for name, section in new_sec.items():
+        if not callable(section):
+            print('$PL_EXTRA_SEC[\'%s\'] must be a function that return a list' % name)
+            return
+        available_sections[name] = section
 
 
 @alias
@@ -217,6 +238,7 @@ def pl_build_prompt():
         if varname not in __xonsh__.env:
             __xonsh__.env[varname] = __xonsh__.env[defname]
 
+    add_section($PL_EXTRA_SEC)
     $PROMPT = prompt_builder($PL_PROMPT)
     $BOTTOM_TOOLBAR = prompt_builder($PL_TOOLBAR)
     $RIGHT_PROMPT = prompt_builder($PL_RPROMPT, True)
