@@ -20,9 +20,15 @@ $PL_COLORS = {
                 "who": ("BLACK", "#666666"),
                 "short_cwd": ("BLACK", "#50a0a0"),
                 "cwd": ("#00adee", "WHITE"),
+                "git_root": ("BLUE", "WHITE"),
+                "git_sub_dir": ("WHITE", "WHITE"),
                 "history": ("WHITE", "#333333"),
                 "venv": ("BLACK", "INTENSE_GREEN"),
             } if 'PL_COLORS' not in ${...} else $PL_COLORS
+if 'git_root' not in $PL_COLORS:
+    $PL_COLORS.update({"git_root": ("BLUE", "WHITE")})
+if 'git_sub_dir' not in $PL_COLORS:
+    $PL_COLORS.update({"git_sub_dir": ("WHITE", "WHITE")})
 
 
 if ptk_shell_type() == 'prompt_toolkit2':
@@ -89,7 +95,7 @@ def cwd():
                     break
                 ni -= 1
         if ni != 0:  # if ni ==0 subdirectory matching failed
-            ps[ni] = '{BLUE}%s{WHITE}' % ps[ni]
+            ps[ni] = '{%s}%s{%s}' % ($PL_COLORS["git_root"][0], ps[ni], $PL_COLORS["git_sub_dir"][0])
 
     if len(ps) > $PL_PARTS:
         new_ps = [ps[0]]

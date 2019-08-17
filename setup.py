@@ -9,7 +9,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='xontrib-powerline',
-    version='0.1.0',
+    version='0.1.1',
     description='Powerline for Xonsh shell',
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
