@@ -8,7 +8,7 @@ xontrib-powerline fork by [santagada/xontrib-powerline](https://github.com/santa
 # Install
 
 ```
-pip install https://github.com/6syun9/xontrib-powerline2
+pip install git+https://github.com/6syun9/xontrib-powerline2
 ```
 
 And them load it on your ``.xonshrc``
@@ -51,14 +51,5 @@ xontrib load powerline
 
 # Credits
 
-This package was created by Leonardo Santagada with Cookiecutter_ 
-and the `laerus/cookiecutter-xontrib`_ project template.
-
-The font being used on the screenshot is the incredible `3270 font`_ with injected characters from `nerd fonts`_.
-
- - `nerd fonts`: https://github.com/ryanoasis/nerd-fonts
- - `3270 font`: https://github.com/rbanffy/3270font
- - `xontrib docs`: http://xon.sh/xontribs.html
- - `xontrib tutorial`: http://xon.sh/tutorial_xontrib.html
- - `Cookiecutter`: https://github.com/audreyr/cookiecutter
  - `laerus/cookiecutter-xontrib`: https://github.com/laerus/cookiecutter-xontrib
+ - `santagada/xontrib-powerline`: https://github.com/santagada/xontrib-powerline
