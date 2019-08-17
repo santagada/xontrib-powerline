@@ -1,9 +1,9 @@
-Xontrib Powerline
-=================
+Xontrib Powerline 2
+===================
 
-Powerline for Xonsh shell.
+xontrib-powerline fork by (santagada/xontrib-powerline)[https://github.com/santagada/xontrib-powerline].
 
-.. image:: https://github.com/santagada/xontrib-powerline/raw/master/screenshot.png
+.. image:: https://github.com/6syun9/xontrib-powerline/raw/master/img/example.png
 
 Install
 -------
@@ -12,7 +12,7 @@ To install this xontrib first download and install the python package:
 
 .. code:: bash
 
-    pip3 install xontrib-powerline
+    pip install https://github.com/6syun9/xontrib-powerline
 
 And them load it on your ``.xonshrc``
 
