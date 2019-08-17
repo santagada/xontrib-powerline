@@ -22,7 +22,7 @@ $PL_COLORS = {
                 "cwd": ("#00adee", "WHITE"),
                 "history": ("WHITE", "#333333"),
                 "venv": ("BLACK", "INTENSE_GREEN"),
-            }
+            } if 'PL_COLORS' not in ${...} else $PL_COLORS
 
 
 if ptk_shell_type() == 'prompt_toolkit2':
