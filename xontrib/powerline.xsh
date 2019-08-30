@@ -14,17 +14,23 @@ $PL_DEFAULT_PROMPT = 'short_cwd>rtns'
 $PL_DEFAULT_RPROMPT = 'history>time'
 $PL_DEFAULT_TOOLBAR = 'who>cwd>branch>virtualenv>full_proc'
 $PL_DEFAULT_EXTRA_SEC = {}
-$PL_EXTRA_SEC = { 'user': lambda: [' {user} ', 'WHITE', '#555'] } if 'PL_EXTRA_SEC' not in ${...} else $PL_EXTRA_SEC
-$PL_COLORS = {
+$PL_EXTRA_SEC = {'user': lambda: [' {user} ', 'WHITE', '#555']} if 'PL_EXTRA_SEC' not in ${...} else $PL_EXTRA_SEC
+$PL_DEFAULT_COLORS = {
                 "time": ("BLACK", "#00adee"),
-                "who": ("BLACK", "#666666"),
-                "short_cwd": ("BLACK", "#50a0a0"),
-                "cwd": ("#00adee", "WHITE"),
-                "git_root": ("BLUE", "WHITE"),
-                "git_sub_dir": ("WHITE", "WHITE"),
+                "who": ("BLACK", "#a6e22e"),
+                "short_cwd": ("WHITE", "#444"),
+                "cwd": ("WHITE", "#444"),
+                "git_root": ("BLACK", "#00adee"),
+                "git_sub_dir": ("WHITE", "#00adee"),
                 "history": ("WHITE", "#333333"),
                 "venv": ("BLACK", "INTENSE_GREEN"),
-            } if 'PL_COLORS' not in ${...} else $PL_COLORS
+            }
+if 'PL_COLORS' not in ${...}:
+    $PL_COLORS = $PL_DEFAULT_COLORS
+else:
+    $PL_DEFAULT_COLORS.update($PL_COLORS)
+    $PL_COLORS = $PL_DEFAULT_COLORS
+
 if 'git_root' not in $PL_COLORS:
     $PL_COLORS.update({"git_root": ("BLUE", "WHITE")})
 if 'git_sub_dir' not in $PL_COLORS:
