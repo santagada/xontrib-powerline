@@ -40,7 +40,7 @@ If you want to override the settings after `xontrib load`, so commit changes to 
 
 To see all available sections type ``pl_available_sections`` command.
 
-<img src="https://github.com/6syun9/xontrib-powerline2/raw/master/img/example_available.png" alt="example" title="example_available">
+<img src="https://github.com/6syun9/xontrib-powerline2/raw/master/img/example_available.png" alt="example_available" width="400px" title="example_available">
 
 ## Default sections
 
@@ -81,20 +81,21 @@ xontrib load powerline
 We can change section color by `$PL_COLORS`.
 
 `$PL_COLORS` is `dict`. Basically, the value is `(text_color, background_color)`.
+
 |key|default value|description|
 |---|---|---|
-|who| ("BLACK", "#a6e22e") ||
-|venv| ("BLACK", "INTENSE_GREEN") ||
+|who| ("BLACK", "#a6e22e") |-|
+|venv| ("BLACK", "INTENSE_GREEN") |-|
 |branch| ("#333") | background color from $PROMPT_FIELDS['branch_bg_color'] |
-|cwd| ("WHITE", "#444") ||
+|cwd| ("WHITE", "#444") |-|
 |git_root| ("BLACK", "#00adee") | used by cwd |
 |git_sub_dir| ("WHITE", "#00adee") | used by cwd |
-|short_cwd| ("WHITE", "#444") ||
+|short_cwd| ("WHITE", "#444") |-|
 |full_proc| ("WHITE", "RED", "#444") |There are two types of background depending on the situation|
-|timing| ("WHITE", "#444") ||
-|time| ("BLACK", "#00adee") ||
-|history| ("WHITE", "#333333") ||
-|rtns| ("WHITE", "RED") ||
+|timing| ("WHITE", "#444") |-|
+|time| ("BLACK", "#00adee") |-|
+|history| ("WHITE", "#333333") |-|
+|rtns| ("WHITE", "RED") |-|
 |full_rtns| ("WHITE", "RED", "#444") |There are two types of background depending on the situation|
 
 
