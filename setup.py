@@ -8,8 +8,8 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='xontrib-powerline',
-    version='0.1.1',
+    name='xontrib-powerline2',
+    version='1.0.0',
     description='Powerline for Xonsh shell',
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",

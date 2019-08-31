@@ -13,23 +13,22 @@ $PL_PARTS = 10
 $PL_DEFAULT_PROMPT = 'short_cwd>rtns'
 $PL_DEFAULT_RPROMPT = 'history>time'
 $PL_DEFAULT_TOOLBAR = 'who>cwd>branch>virtualenv>full_proc'
-$PL_DEFAULT_EXTRA_SEC = {}
-$PL_EXTRA_SEC = { 'user': lambda: [' {user} ', 'WHITE', '#555'] } if 'PL_EXTRA_SEC' not in ${...} else $PL_EXTRA_SEC
-$PL_COLORS = {
-                "time": ("BLACK", "#00adee"),
-                "who": ("BLACK", "#666666"),
-                "short_cwd": ("BLACK", "#50a0a0"),
-                "cwd": ("#00adee", "WHITE"),
-                "git_root": ("BLUE", "WHITE"),
-                "git_sub_dir": ("WHITE", "WHITE"),
-                "history": ("WHITE", "#333333"),
+$PL_DEFAULT_EXTRA_SEC = {'user': lambda: [' {user} ', 'WHITE', '#555']}
+$PL_DEFAULT_COLORS = {
+                "who": ("BLACK", "#a6e22e"),
                 "venv": ("BLACK", "INTENSE_GREEN"),
-            } if 'PL_COLORS' not in ${...} else $PL_COLORS
-if 'git_root' not in $PL_COLORS:
-    $PL_COLORS.update({"git_root": ("BLUE", "WHITE")})
-if 'git_sub_dir' not in $PL_COLORS:
-    $PL_COLORS.update({"git_sub_dir": ("WHITE", "WHITE")})
-
+                "branch": ("#333"),
+                "cwd": ("WHITE", "#444"),
+                "git_root": ("BLACK", "#00adee"),
+                "git_sub_dir": ("WHITE", "#00adee"),
+                "short_cwd": ("WHITE", "#444"),
+                "full_proc": ("WHITE", "RED", "#444"),
+                "timing": ("WHITE", "#444"),
+                "time": ("BLACK", "#00adee"),
+                "history": ("WHITE", "#333333"),
+                "rtns": ("WHITE", "RED"),
+                "full_rtns": ("WHITE", "RED", "#444"),
+            }
 
 if ptk_shell_type() == 'prompt_toolkit2':
     $PTK_STYLE_OVERRIDES['bottom-toolbar'] = 'noreverse'
@@ -60,17 +59,21 @@ def register_sec(f):
 
 
 @register_sec
-def history():
+def history(sample=False):
+    if sample:
+        return Section(' 100 ', *$PL_COLORS["history"])
     return Section(' %d ' % len(__xonsh__.history), *$PL_COLORS["history"])
 
 
 @register_sec
-def time():
+def time(sample=False):
     return Section(strftime(' %H:%M '), *$PL_COLORS["time"])
 
 
 @register_sec
-def short_cwd():
+def short_cwd(sample=False):
+    if sample:
+        return Section(' ~/e/h/p/fuga ', *$PL_COLORS["short_cwd"])
     return Section(' {short_cwd} ', *$PL_COLORS["short_cwd"])
 
 
@@ -81,20 +84,24 @@ def compress_home(path):
 
 
 @register_sec
-def cwd():
+def cwd(sample=False):
     ps = compress_home($PWD).strip(os.sep).split(os.sep)
+    if sample:
+        ps = ['~','example','hoge','piyo','fuga']
 
     if $PROMPT_FIELDS['curr_branch']():
         prefix = $(git rev-parse --show-prefix).strip()
-        ni = -1  # the default is for empty prefix, which means the last directory is the root of the repository
-        if prefix != '':  # this is the case that we are in a sub directory, so we try matching subdirectories
+        if sample:
+            prefix = ['hoge', 'piyo', 'fuga']
+        ni = -1
+        if prefix != '':
             subs = prefix.rstrip(os.sep).split(os.sep)
             for sub in reversed(subs):
                 if ps[ni] != sub:
                     ni = 0
                     break
                 ni -= 1
-        if ni != 0:  # if ni ==0 subdirectory matching failed
+        if ni != 0:
             ps[ni] = '{%s}%s{%s}' % ($PL_COLORS["git_root"][0], ps[ni], $PL_COLORS["git_sub_dir"][0])
 
     if len(ps) > $PL_PARTS:
@@ -108,63 +115,70 @@ def cwd():
 
 
 @register_sec
-def branch():
+def branch(sample=False):
+    if sample:
+        return [
+                Section('   hoge ', $PL_COLORS['branch'], 'YELLOW'),
+                Section('   piyo ', $PL_COLORS['branch'], 'GREEN'),
+                Section('   fuga ', $PL_COLORS['branch'], 'RED')]
     if $PROMPT_FIELDS['curr_branch']():
-        return Section('  {curr_branch} ', '#333', $PROMPT_FIELDS['branch_bg_color']()[1+len('background_'):-1])
+        return Section('  {curr_branch} ', $PL_COLORS['branch'], $PROMPT_FIELDS['branch_bg_color']()[1+len('background_'):-1])
 
 
 @register_sec
-def virtualenv():
+def virtualenv(sample=False):
+    if sample:
+        return Section(' 🐍 example env', *$PL_COLORS["venv"])
     if $PROMPT_FIELDS['env_name']():
         return Section(' 🐍 {env_name} ', *$PL_COLORS["venv"])
 
 
 @register_sec
-def rtns():
+def rtns(sample=False):
+    if sample:
+        return Section(' ! ', *$PL_COLORS['rtns'])
     if __xonsh__.history.rtns and __xonsh__.history.rtns[-1] != 0:
-        return Section(' ! ', 'WHITE', 'RED')
-
+        return Section(' ! ', *$PL_COLORS['rtns'])
 
 @register_sec
-def full_rtns():
+def full_rtns(sample=False):
+    if sample:
+        return [Section(' hoge ', $PL_COLORS['full_rtns'][0], $PL_COLORS['full_rtns'][1]),
+                Section(' piyo ', $PL_COLORS['full_rtns'][0], $PL_COLORS['full_rtns'][2])]
     if __xonsh__.history.rtns:
         rtn = __xonsh__.history.rtns[-1]
-        if rtn != 0:
-            color = 'RED'
-        else:
-            color = '#444'
-
-        return Section(' ' + str(rtn) + ' ', 'WHITE', color)
+        color = $PL_COLORS['full_rtns'][1] if rtn != 0 else $PL_COLORS['full_rtns'][2]
+        return Section(' ' + str(rtn) + ' ', $PL_COLORS['full_rtns'][0], color)
 
 
 @register_sec
-def timing():
+def timing(sample=False):
+    if sample:
+        return Section(' 0.01s ', *$PL_COLORS['timing'])
     if __xonsh__.history.tss:
         tss = __xonsh__.history.tss[-1]
-
-        return Section(' %.2fs ' % (tss[1] - tss[0]), 'WHITE', '#444')
+        return Section(' %.2fs ' % (tss[1] - tss[0]), *$PL_COLORS['timing'])
 
 
 @register_sec
-def full_proc():
+def full_proc(sample=False):
+    if sample:
+        return [Section(' rtn: 1 ts: 0.01s ', $PL_COLORS['full_proc'][0], $PL_COLORS['full_proc'][1]),
+                Section(' rtn: 2 ts: 0.02s ', $PL_COLORS['full_proc'][0], $PL_COLORS['full_proc'][2])]
     if __xonsh__.history.buffer:
         lst = __xonsh__.history.buffer[-1]
-        if lst['rtn'] != 0:
-            color = 'RED'
-        else:
-            color = '#444'
-
+        color = $PL_COLORS['full_proc'][1] if lst['rtn'] != 0 else $PL_COLORS['full_proc'][2]
         value = ' rtn: %d ts: %.2fs ' % (lst['rtn'], lst['ts'][1] - lst['ts'][0])
-        return Section(value, 'WHITE', color)
+        return Section(value, $PL_COLORS['full_proc'][0], color)
 
 
 @register_sec
-def who():
+def who(sample=False):
     return Section(' {user}@{hostname} ', *$PL_COLORS["who"])
 
 
-def prompt_builder(var, right=False):
-    if var == '!':  # in case the prompt format is a single ! it means empty
+def prompt_builder(var, right=False, sample=False):
+    if var == '!':
         return ''
 
     pre_sections = []
@@ -178,16 +192,17 @@ def prompt_builder(var, right=False):
         p = []
         sections = []
         for s in pre_sections:
-            # A section can be 2 things, a literal Section or a Function
-            # and Functions can either return a Section of None if they are not part of prompt
             if type(s()) == list:
                 s = Section(*s())
             if isinstance(s, Section):
                 sections.append(s)
             else:
-                r = s()
+                r = s(sample)
                 if r is not None:
-                    sections.append(r)
+                    if type(r) == list:
+                        sections += r
+                    else:
+                        sections.append(r)
 
         size = len(sections)
         for i, sec in enumerate(sections):
@@ -223,33 +238,49 @@ def pl_set_mode(args):
         for mode, seps in modes.items():
             print('%s: %s' % (mode, ', '.join(seps)))
         return
+    $PL_SEP_MODE = args[0]
     seps = modes[args[0]]
     $PL_SEP, $PL_SEP_THIN, $PL_RSEP, _ = seps
+    if 'PL_ORG_SEP' in ${...}:
+        $PL_SEP = $PL_ORG_SEP
+    if 'PL_ORG_SEP_THIN' in ${...}:
+        $PL_SEP_THIN = $PL_ORG_SEP_THIN
+    if 'PL_ORG_RSEP' in ${...}:
+        $PL_RSEP = $PL_ORG_RSEP
 
 
 @alias
 def pl_available_sections():
     for name in available_sections.keys():
-        r = prompt_builder(name)()
+        if name in ['branch', 'virtualenv', 'rtns', 'full_rtns', 'timing', 'full_proc', 'cwd', 'short_cwd']:
+            r = prompt_builder(name, sample=True)()
+        else:
+            r = prompt_builder(name)()
         f = __xonsh__.shell.prompt_formatter(r)
         __xonsh__.shell.print_color('%s: %s' % (name, f))
 
 
 @alias
 def pl_build_prompt():
-    pl_set_mode(['powerline'])
+    $PL_SEP_MODE = 'powerline' if 'PL_SEP_MODE' not in ${...} else $PL_SEP_MODE
+    pl_set_mode([$PL_SEP_MODE])
     for var in 'PROMPT RPROMPT TOOLBAR'.split():
         varname = 'PL_' + var
         defname = 'PL_DEFAULT_' + var
         if varname not in __xonsh__.env:
             __xonsh__.env[varname] = __xonsh__.env[defname]
 
+    $PL_EXTRA_SEC = $PL_DEFAULT_EXTRA_SEC if 'PL_EXTRA_SEC' not in ${...} else $PL_EXTRA_SEC
     add_section($PL_EXTRA_SEC)
+    if 'PL_COLORS' not in ${...}:
+        $PL_COLORS = $PL_DEFAULT_COLORS
+    else:
+        $PL_DEFAULT_COLORS.update($PL_COLORS)
+        $PL_COLORS = $PL_DEFAULT_COLORS
     $PROMPT = prompt_builder($PL_PROMPT)
     $BOTTOM_TOOLBAR = prompt_builder($PL_TOOLBAR)
     $RIGHT_PROMPT = prompt_builder($PL_RPROMPT, True)
     $TITLE = '{current_job:{} | }{cwd_base} | {user}@{hostname}'
     $MULTILINE_PROMPT = ''
-
 
 pl_build_prompt()
