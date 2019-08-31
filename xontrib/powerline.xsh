@@ -24,6 +24,10 @@ $PL_DEFAULT_COLORS = {
                 "git_sub_dir": ("WHITE", "#00adee"),
                 "history": ("WHITE", "#333333"),
                 "venv": ("BLACK", "INTENSE_GREEN"),
+                "timing": ("WHITE", "#444"),
+                "rtns": ("WHITE", "RED"),
+                "full_rtns": ("WHITE", "RED", "#444"),
+                "full_proc": ("WHITE", "RED", "#444")
             }
 if 'PL_COLORS' not in ${...}:
     $PL_COLORS = $PL_DEFAULT_COLORS
@@ -123,32 +127,31 @@ def virtualenv():
 @register_sec
 def rtns():
     if __xonsh__.history.rtns and __xonsh__.history.rtns[-1] != 0:
-        return Section(' ! ', 'WHITE', 'RED')
+        return Section(' ! ', *$PL_COLORS['rtns'])
 
 
 @register_sec
 def full_rtns():
     if __xonsh__.history.rtns:
         rtn = __xonsh__.history.rtns[-1]
-        color = 'RED' if rtn != 0 else '#444'
-        return Section(' ' + str(rtn) + ' ', 'WHITE', color)
+        color = $PL_COLORS['full_rtns'][1] if rtn != 0 else $PL_COLORS['full_rtns'][2]
+        return Section(' ' + str(rtn) + ' ', $PL_COLORS['full_rtns'][0], color)
 
 
 @register_sec
 def timing():
     if __xonsh__.history.tss:
         tss = __xonsh__.history.tss[-1]
-
-        return Section(' %.2fs ' % (tss[1] - tss[0]), 'WHITE', '#444')
+        return Section(' %.2fs ' % (tss[1] - tss[0]), *$PL_COLORS['timing'])
 
 
 @register_sec
 def full_proc():
     if __xonsh__.history.buffer:
         lst = __xonsh__.history.buffer[-1]
-        color = 'RED' if lst['rtn'] != 0 else '#444'
+        color = $PL_COLORS['full_proc'][1] if lst['rtn'] != 0 else $PL_COLORS['full_proc'][2]
         value = ' rtn: %d ts: %.2fs ' % (lst['rtn'], lst['ts'][1] - lst['ts'][0])
-        return Section(value, 'WHITE', color)
+        return Section(value, $PL_COLORS['full_proc'][0], color)
 
 
 @register_sec
