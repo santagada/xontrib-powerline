@@ -29,7 +29,7 @@ Examples:
 $PL_PROMPT='cwd>branch'
 $PL_RPROMPT = '!'  # for no toolbar
 $PL_TOOLBAR = 'who>virtualenv>branch>cwd>full_proc'
-xontrib load powerline
+xontrib load powerline2
 ```
 
 ## Bulid prompt
@@ -71,7 +71,7 @@ $PL_EXTRA_SEC = {"user": lambda: [' I'm {user} ', 'BLACK', '#fd971f']}
 $PL_PROMPT='user>cwd>branch'
 $PL_TOOLBAR='!'
 $PL_RPROMPT='!'
-xontrib load powerline
+xontrib load powerline2
 ```
 <img src="https://github.com/6syun9/xontrib-powerline2/raw/master/img/example_custom_sec.png" alt="example" title="custom_sec">
 
@@ -127,7 +127,7 @@ If you want to use original separeter, you can use `$PL_ORG_SEP`, `$PL_ORG_SEP_T
 $PL_ORG_SEP = '■'
 $PL_ORG_SEP_THIN = '□'
 $PL_ORG_RSEP = '■'
-xontrib load xontrib-powerline2
+xontrib load powerline2
 ```
 <img src="https://github.com/6syun9/xontrib-powerline2/raw/master/img/example_origin_sep.png" alt="example" title="origin_sep">
 
