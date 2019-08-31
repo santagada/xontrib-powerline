@@ -85,15 +85,15 @@ def cwd():
 
     if $PROMPT_FIELDS['curr_branch']():
         prefix = $(git rev-parse --show-prefix).strip()
-        ni = -1  # the default is for empty prefix, which means the last directory is the root of the repository
-        if prefix != '':  # this is the case that we are in a sub directory, so we try matching subdirectories
+        ni = -1
+        if prefix != '':
             subs = prefix.rstrip(os.sep).split(os.sep)
             for sub in reversed(subs):
                 if ps[ni] != sub:
                     ni = 0
                     break
                 ni -= 1
-        if ni != 0:  # if ni ==0 subdirectory matching failed
+        if ni != 0:
             ps[ni] = '{%s}%s{%s}' % ($PL_COLORS["git_root"][0], ps[ni], $PL_COLORS["git_sub_dir"][0])
 
     if len(ps) > $PL_PARTS:
