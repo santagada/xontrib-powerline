@@ -13,8 +13,7 @@ $PL_PARTS = 10
 $PL_DEFAULT_PROMPT = 'short_cwd>rtns'
 $PL_DEFAULT_RPROMPT = 'history>time'
 $PL_DEFAULT_TOOLBAR = 'who>cwd>branch>virtualenv>full_proc'
-$PL_DEFAULT_EXTRA_SEC = {}
-$PL_EXTRA_SEC = {'user': lambda: [' {user} ', 'WHITE', '#555']} if 'PL_EXTRA_SEC' not in ${...} else $PL_EXTRA_SEC
+$PL_DEFAULT_EXTRA_SEC = {'user': lambda: [' {user} ', 'WHITE', '#555']}
 $PL_DEFAULT_COLORS = {
                 "time": ("BLACK", "#00adee"),
                 "who": ("BLACK", "#a6e22e"),
@@ -27,14 +26,9 @@ $PL_DEFAULT_COLORS = {
                 "timing": ("WHITE", "#444"),
                 "rtns": ("WHITE", "RED"),
                 "full_rtns": ("WHITE", "RED", "#444"),
-                "full_proc": ("WHITE", "RED", "#444")
+                "full_proc": ("WHITE", "RED", "#444"),
+                "branch": ("#333")
             }
-if 'PL_COLORS' not in ${...}:
-    $PL_COLORS = $PL_DEFAULT_COLORS
-else:
-    $PL_DEFAULT_COLORS.update($PL_COLORS)
-    $PL_COLORS = $PL_DEFAULT_COLORS
-
 
 if ptk_shell_type() == 'prompt_toolkit2':
     $PTK_STYLE_OVERRIDES['bottom-toolbar'] = 'noreverse'
@@ -115,7 +109,7 @@ def cwd():
 @register_sec
 def branch():
     if $PROMPT_FIELDS['curr_branch']():
-        return Section('  {curr_branch} ', '#333', $PROMPT_FIELDS['branch_bg_color']()[1+len('background_'):-1])
+        return Section('  {curr_branch} ', $PL_COLORS['branch'], $PROMPT_FIELDS['branch_bg_color']()[1+len('background_'):-1])
 
 
 @register_sec
@@ -160,7 +154,7 @@ def who():
 
 
 def prompt_builder(var, right=False):
-    if var == '!':  # in case the prompt format is a single ! it means empty
+    if var == '!':
         return ''
 
     pre_sections = []
@@ -174,8 +168,6 @@ def prompt_builder(var, right=False):
         p = []
         sections = []
         for s in pre_sections:
-            # A section can be 2 things, a literal Section or a Function
-            # and Functions can either return a Section of None if they are not part of prompt
             if type(s()) == list:
                 s = Section(*s())
             if isinstance(s, Section):
@@ -240,12 +232,17 @@ def pl_build_prompt():
         if varname not in __xonsh__.env:
             __xonsh__.env[varname] = __xonsh__.env[defname]
 
+    $PL_EXTRA_SEC = $PL_DEFAULT_EXTRA_SEC if 'PL_EXTRA_SEC' not in ${...} else $PL_EXTRA_SEC
     add_section($PL_EXTRA_SEC)
+    if 'PL_COLORS' not in ${...}:
+        $PL_COLORS = $PL_DEFAULT_COLORS
+    else:
+        $PL_DEFAULT_COLORS.update($PL_COLORS)
+        $PL_COLORS = $PL_DEFAULT_COLORS
     $PROMPT = prompt_builder($PL_PROMPT)
     $BOTTOM_TOOLBAR = prompt_builder($PL_TOOLBAR)
     $RIGHT_PROMPT = prompt_builder($PL_RPROMPT, True)
     $TITLE = '{current_job:{} | }{cwd_base} | {user}@{hostname}'
     $MULTILINE_PROMPT = ''
-
 
 pl_build_prompt()
