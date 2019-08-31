@@ -31,11 +31,6 @@ else:
     $PL_DEFAULT_COLORS.update($PL_COLORS)
     $PL_COLORS = $PL_DEFAULT_COLORS
 
-if 'git_root' not in $PL_COLORS:
-    $PL_COLORS.update({"git_root": ("BLUE", "WHITE")})
-if 'git_sub_dir' not in $PL_COLORS:
-    $PL_COLORS.update({"git_sub_dir": ("WHITE", "WHITE")})
-
 
 if ptk_shell_type() == 'prompt_toolkit2':
     $PTK_STYLE_OVERRIDES['bottom-toolbar'] = 'noreverse'
@@ -135,11 +130,7 @@ def rtns():
 def full_rtns():
     if __xonsh__.history.rtns:
         rtn = __xonsh__.history.rtns[-1]
-        if rtn != 0:
-            color = 'RED'
-        else:
-            color = '#444'
-
+        color = 'RED' if rtn != 0 else '#444'
         return Section(' ' + str(rtn) + ' ', 'WHITE', color)
 
 
@@ -155,11 +146,7 @@ def timing():
 def full_proc():
     if __xonsh__.history.buffer:
         lst = __xonsh__.history.buffer[-1]
-        if lst['rtn'] != 0:
-            color = 'RED'
-        else:
-            color = '#444'
-
+        color = 'RED' if lst['rtn'] != 0 else '#444'
         value = ' rtn: %d ts: %.2fs ' % (lst['rtn'], lst['ts'][1] - lst['ts'][0])
         return Section(value, 'WHITE', color)
 
