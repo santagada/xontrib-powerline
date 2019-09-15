@@ -13,7 +13,7 @@ setup(
     description='Powerline for Xonsh shell',
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
-    url='https://github.com/6syun9/xontrib-powerline2',
+    url='https://github.com/vaaaaanquish/xontrib-powerline2',
     author='vaaaaanquish',
     author_email='6syun9@gmail.com',
     license='MIT',
