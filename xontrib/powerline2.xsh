@@ -2,7 +2,11 @@ import os
 from os import path
 from collections import namedtuple
 from time import strftime
-from xonsh.platform import ptk_shell_type
+try:
+    from xonsh.platform import ptk_shell_type
+    ptk2 = ptk_shell_type() == 'prompt_toolkit2'
+except ImportError:
+    ptk2 = True
 
 
 __all__ = ()
@@ -30,7 +34,7 @@ $PL_DEFAULT_COLORS = {
                 "full_rtns": ("WHITE", "RED", "#444"),
             }
 
-if ptk_shell_type() == 'prompt_toolkit2':
+if ptk2:
     $PTK_STYLE_OVERRIDES['bottom-toolbar'] = 'noreverse'
 
 modes = {
