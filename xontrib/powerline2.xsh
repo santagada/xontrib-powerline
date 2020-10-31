@@ -2,6 +2,8 @@ import os
 from os import path
 from collections import namedtuple
 from time import strftime
+from packaging import version
+import xonsh
 try:
     from xonsh.platform import ptk_shell_type
     ptk2 = ptk_shell_type() == 'prompt_toolkit2'
@@ -10,6 +12,10 @@ except ImportError:
 
 
 __all__ = ()
+
+# NO_COLOR is deprecated and should be replaced with RESET.
+# https://github.com/xonsh/xonsh/pull/3793
+COLOR_TOKEN = 'NO_COLOR' if version.parse(xonsh.__version__) < version.parse("0.9.24") else 'RESET'
 
 Section = namedtuple('Section', ['line', 'fg', 'bg'])
 
@@ -220,7 +226,7 @@ def prompt_builder(var, right=False, sample=False):
                     p.append('{BACKGROUND_%s}' % sec.bg)
                 p.append('{%s}%s' % (sec.fg, sec.line))
                 if last:
-                    p.append('{NO_COLOR}{%s}%s{NO_COLOR} ' % (sec.bg, $PL_SEP))
+                    p.append('{%s}{%s}%s{%s} ' % (COLOR_TOKEN, sec.bg, $PL_SEP, COLOR_TOKEN))
                 else:
                     p.append('{BACKGROUND_%s}{%s}%s' % (sections[i+1].bg, sec.bg, $PL_SEP))
         return ''.join(p)
