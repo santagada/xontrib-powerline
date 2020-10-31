@@ -226,7 +226,7 @@ def prompt_builder(var, right=False, sample=False):
                     p.append('{BACKGROUND_%s}' % sec.bg)
                 p.append('{%s}%s' % (sec.fg, sec.line))
                 if last:
-                    p.append('{COLOR_TOKEN}{%s}%s{COLOR_TOKEN} ' % (sec.bg, $PL_SEP))
+                    p.append('{%s}{%s}%s{%s} ' % (COLOR_TOKEN, sec.bg, $PL_SEP, COLOR_TOKEN))
                 else:
                     p.append('{BACKGROUND_%s}{%s}%s' % (sections[i+1].bg, sec.bg, $PL_SEP))
         return ''.join(p)
