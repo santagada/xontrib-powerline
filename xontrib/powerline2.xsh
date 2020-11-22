@@ -178,7 +178,7 @@ def full_proc(sample=False):
     if __xonsh__.history.buffer:
         lst = __xonsh__.history.buffer[-1]
         color = $PL_COLORS['full_proc'][1] if lst['rtn'] != 0 else $PL_COLORS['full_proc'][2]
-        value = ' rtn: %d ts: %.2fs ' % (lst['rtn'], lst['ts'][1] - lst['ts'][0])
+        value = ' rtn: %d ts: %.2fs ' % (lst['rtn'] or -1, lst['ts'][1] - lst['ts'][0])
         return Section(value, $PL_COLORS['full_proc'][0], color)
 
 
