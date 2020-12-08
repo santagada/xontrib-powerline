@@ -291,6 +291,6 @@ def pl_build_prompt():
     $BOTTOM_TOOLBAR = prompt_builder($PL_TOOLBAR)
     $RIGHT_PROMPT = prompt_builder($PL_RPROMPT, True)
     $TITLE = '{current_job:{} | }{cwd_base} | {user}@{hostname}'
-    $MULTILINE_PROMPT = '»'
+    $MULTILINE_PROMPT = '»' if 'MULTILINE_PROMPT' not in ${...} else $MULTILINE_PROMPT
 
 pl_build_prompt()
