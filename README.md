@@ -20,7 +20,7 @@ xontrib load powerline2
 
 # Configuration
 
-There are two variables that can be set, ``$PROMPT`` for main prompt, ``$PL_PROMPT`` for the right prompt and ``$PL_TOOLBAR`` for the bottom toolbar.
+There are two variables that can be set, ``$PL_PROMPT`` for main prompt, ``$PL_PROMPT`` for the right prompt and ``$PL_TOOLBAR`` for the bottom toolbar.
 They contain a list of sections that can be used separated by ``>``. The value ``!`` means not to use that prompt.
 
 Examples:
@@ -98,6 +98,15 @@ We can change section color by `$PL_COLORS`.
 |rtns| ("WHITE", "RED") |-|
 |full_rtns| ("WHITE", "RED", "#444") |There are two types of background depending on the situation|
 
+
+## Multi line prompt
+
+We can use multi line prompt by `\n`.
+```
+$PL_PROMPT='\nuser>mode>\ncwd'
+```
+
+<img src="https://github.com/vaaaaanquish/xontrib-powerline2/raw/master/img/example_multiline.png" alt="example" title="multiline">
 
 ## Separate mode
 
