@@ -191,45 +191,51 @@ def prompt_builder(var, right=False, sample=False):
     if var == '!':
         return ''
 
-    pre_sections = []
-    for e in var.split('>'):
-        if e not in available_sections:
-            print('section %s not found, skipping it' % e)
-            continue
-        pre_sections.append(available_sections[e])
+    multiline = []
+    for line in var.split('\n'):
+        pre_sections = []
+        for e in line.split('>'):
+            if e not in available_sections:
+                print('section %s not found, skipping it' % e)
+                continue
+            pre_sections.append(available_sections[e])
+        multiline.append(pre_sections)
 
     def prompt():
-        p = []
-        sections = []
-        for s in pre_sections:
-            if type(s()) == list:
-                s = Section(*s())
-            if isinstance(s, Section):
-                sections.append(s)
-            else:
-                r = s(sample)
-                if r is not None:
-                    if type(r) == list:
-                        sections += r
-                    else:
-                        sections.append(r)
-
-        size = len(sections)
-        for i, sec in enumerate(sections):
-            last = (i == size-1)
-            first = (i == 0)
-
-            if right:
-                p.append('{%s}%s{BACKGROUND_%s}{%s}%s' % (sec.bg, $PL_RSEP, sec.bg, sec.fg, sec.line))
-            else:
-                if first:
-                    p.append('{BACKGROUND_%s}' % sec.bg)
-                p.append('{%s}%s' % (sec.fg, sec.line))
-                if last:
-                    p.append('{%s}{%s}%s{%s} ' % (COLOR_TOKEN, sec.bg, $PL_SEP, COLOR_TOKEN))
+        multiline_prompt = []
+        for pre_sections in multiline:
+            p = []
+            sections = []
+            for s in pre_sections:
+                if type(s()) == list:
+                    s = Section(*s())
+                if isinstance(s, Section):
+                    sections.append(s)
                 else:
-                    p.append('{BACKGROUND_%s}{%s}%s' % (sections[i+1].bg, sec.bg, $PL_SEP))
-        return ''.join(p)
+                    r = s(sample)
+                    if r is not None:
+                        if type(r) == list:
+                            sections += r
+                        else:
+                            sections.append(r)
+
+            size = len(sections)
+            for i, sec in enumerate(sections):
+                last = (i == size-1)
+                first = (i == 0)
+
+                if right:
+                    p.append('{%s}%s{BACKGROUND_%s}{%s}%s' % (sec.bg, $PL_RSEP, sec.bg, sec.fg, sec.line))
+                else:
+                    if first:
+                        p.append('{BACKGROUND_%s}' % sec.bg)
+                    p.append('{%s}%s' % (sec.fg, sec.line))
+                    if last:
+                        p.append('{%s}{%s}%s{%s} ' % (COLOR_TOKEN, sec.bg, $PL_SEP, COLOR_TOKEN))
+                    else:
+                        p.append('{BACKGROUND_%s}{%s}%s' % (sections[i+1].bg, sec.bg, $PL_SEP))
+            multiline_prompt.append(''.join(p))
+        return '\n'.join(multiline_prompt)
     return prompt
 
 

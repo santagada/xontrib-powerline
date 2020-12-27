@@ -20,7 +20,7 @@ xontrib load powerline2
 
 # Configuration
 
-There are two variables that can be set, ``$PROMPT`` for main prompt, ``$PL_PROMPT`` for the right prompt and ``$PL_TOOLBAR`` for the bottom toolbar.
+There are two variables that can be set, ``$PL_PROMPT`` for main prompt, ``$PL_PROMPT`` for the right prompt and ``$PL_TOOLBAR`` for the bottom toolbar.
 They contain a list of sections that can be used separated by ``>``. The value ``!`` means not to use that prompt.
 
 Examples:
