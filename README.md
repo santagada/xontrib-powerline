@@ -99,6 +99,15 @@ We can change section color by `$PL_COLORS`.
 |full_rtns| ("WHITE", "RED", "#444") |There are two types of background depending on the situation|
 
 
+## Multi line prompt
+
+We can use multi line prompt by `\n`.
+```
+$PL_PROMPT='\nuser>mode>\ncwd'
+```
+
+<img src="https://github.com/vaaaaanquish/xontrib-powerline2/raw/master/img/example_multiline.png" alt="example" title="multiline">
+
 ## Separate mode
 
 We can change the way of separation mode by `$PL_SEP_MODE`.
