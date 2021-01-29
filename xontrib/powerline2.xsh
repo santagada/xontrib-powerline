@@ -41,7 +41,12 @@ $PL_DEFAULT_COLORS = {
             }
 
 if ptk2:
-    $PTK_STYLE_OVERRIDES['bottom-toolbar'] = 'noreverse'
+    # $PTK_STYLE_OVERRIDES is deprecated
+    # https://github.com/vaaaaanquish/xontrib-powerline2/issues/19
+    if version.parse(xonsh.__version__) < version.parse("0.9.24"):
+        $PTK_STYLE_OVERRIDES['bottom-toolbar'] = 'noreverse'
+    else:
+        $XONSH_STYLE_OVERRIDES['bottom-toolbar'] = 'noreverse'
 
 modes = {
     'powerline': '\ue0b0\ue0b1\ue0b2\ue0b3',
