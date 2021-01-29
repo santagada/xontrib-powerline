@@ -144,3 +144,8 @@ xontrib load powerline2
 
  - `laerus/cookiecutter-xontrib`: https://github.com/laerus/cookiecutter-xontrib
  - `santagada/xontrib-powerline`: https://github.com/santagada/xontrib-powerline
+
+# Similer Projects
+
+ - `jnoortheen/xontrib-powerline3`: https://github.com/jnoortheen/xontrib-powerline3
+    - That is also compatible with `ASYNC_PROMPT`!
